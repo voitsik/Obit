@@ -34,11 +34,13 @@ AC_INIT(Obit, 1.0, bcotton@nrao.edu)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_CONFIG_SRCDIR(src/Obit.c)
 
+AC_CONFIG_MACRO_DIRS([m4])
+
 # Checks for programs.
 CFLAGS="-g -O3"
 AC_PROG_CC
 AC_PROG_RANLIB
-#AM_PATH_PYTHON(2.5)
+AM_PATH_PYTHON(3.2)
 AC_PATH_PROG(SWIG, swig)
 
 # Checks for header files.
@@ -65,8 +67,8 @@ AC_PATH_GSL
 AC_PATH_XMLRPC
 AC_PATH_ZLIB
 AC_PATH_PLPLOT
-AM_PATH_PGPLOT
-AC_PATH_PYTHON2_5
+# AM_PATH_PGPLOT
+# AC_PATH_PYTHON2_5
 AC_PATH_WVR
 
 # Checks for library functions
