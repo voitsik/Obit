@@ -41,24 +41,24 @@ if os.path.exists( filename ):
     # Save the original file
     cmd = 'cp -pv ' + filename + ' ' + tempFile # copy and preserve timestamps
     f = os.popen(cmd)
-    print f.read(),
+    print(f.read(), end=' ')
 
 # Revert original file so svnversion does not see it as modified
 cmd = 'svn revert ' + filename 
 f = os.popen(cmd)
-print f.read(),
+print(f.read(), end=' ')
 
 # Get revision number
 cmd = 'svnversion -n ' + OBIT 
 f = os.popen(cmd)
 ver = f.read()
-print('Obit version is ' + ver)
+print(('Obit version is ' + ver))
 
 if ( verOrig and verOrig == ver ):
-    print "Obit version in ObitVersion.c is already up to date."
+    print("Obit version in ObitVersion.c is already up to date.")
     cmd = 'cp -pv ' + tempFile + ' ' + filename
     f = os.popen(cmd)
-    print f.read(),
+    print(f.read(), end=' ')
     #os.remove(tempFile)
     sys.exit() # terminate script
 
@@ -85,4 +85,4 @@ f.close()
 # Remove tempFile
 if os.path.exists(tempFile):
     os.remove(tempFile)
-print 'Obit version written to ' + filename
+print('Obit version written to ' + filename)
