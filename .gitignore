@@ -6,11 +6,9 @@
 # http://www.gnu.org/software/autoconf
 
 autom4te.cache
-config.guess
 config.h.in
 config.log
 config.status
-config.sub
 stamp-h1
 
 # http://www.gnu.org/software/m4/
