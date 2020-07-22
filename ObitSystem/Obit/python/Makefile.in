@@ -99,11 +99,11 @@ $(TARGETS): setupdata.py $(MYLIBS)
 #	$(SWIG) -Wall -python -I$(SWIGLIB) -I$(SWIGLIB)/python Obit.i
 
 # libObit.so for binary distribution, libObit.a for build from source:
-Obit: Obit_wrap.c ../lib/libObit.so
-	rm -rf build
-	python makesetup.py
-	python setup.py build install --install-lib=.
-	python3 setup.py build install --install-lib=.
+#Obit: Obit_wrap.c ../lib/libObit.so
+#	rm -rf build
+#	python makesetup.py
+#	python setup.py build install --install-lib=.
+#	python3 setup.py build install --install-lib=.
 
 # Write compile/link info to setupdata.py
 setupdata.py: Makefile
