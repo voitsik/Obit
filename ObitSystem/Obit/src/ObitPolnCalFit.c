@@ -36,6 +36,7 @@
 #include "ObitPrecess.h"
 #ifdef HAVE_GSL
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_version.h>
 #endif /* HAVE_GSL */ 
 #ifndef VELIGHT
 #define VELIGHT 2.997924562e8
@@ -2315,6 +2316,9 @@ static void doFitGSL (ObitPolnCalFit *in, ObitErr *err)
   gsl_multifit_fdfsolver *solver = in->solver;
   gsl_matrix *covar              = in->covar;
   gsl_vector *work               = in->work;
+#if GSL_MAJOR_VERSION >=2
+  gsl_matrix *J = 0;
+#endif
 
   if (err->error) return;  /* Error exists? */
   
@@ -2478,7 +2482,14 @@ static void doFitGSL (ObitPolnCalFit *in, ObitErr *err)
   /* Errors */
   if (in->doError) {
     /* Get covariance matrix - extract diagonal terms */
+#if GSL_MAJOR_VERSION >=2
+    J = gsl_matrix_alloc(solver->fdf->n, solver->fdf->p);
+    gsl_multifit_fdfsolver_jac(solver, J);
+    gsl_multifit_covar(J, 0.0, covar);
+    gsl_matrix_free(J);
+#else
     gsl_multifit_covar (solver->J, 0.0, covar);
+#endif
     for (iant=0; iant<in->nant; iant++) {
       /* Loop over antenna parameters */
       for (k=0; k<4; k++) {

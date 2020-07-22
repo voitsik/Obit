@@ -31,6 +31,7 @@
 #include "ObitSinCos.h"
 #ifdef HAVE_GSL
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_version.h>
 #endif /* HAVE_GSL */ 
 #ifndef VELIGHT
 #define VELIGHT 2.997924562e8
@@ -1674,7 +1675,11 @@ static void NLRMFit (NLRMFitArg *arg)
   ofloat sumwt, fblank = ObitMagicF();
   double chi2;
   int status;
- 
+#ifdef HAVE_GSL
+#if GSL_MAJOR_VERSION >=2
+  gsl_matrix *J = 0;
+#endif
+#endif /* HAVE_GSL */
   /* Initialize output */
   if (arg->doError) 
     for (i=0; i<2*nterm+1; i++) arg->coef[i] = 0.0;
@@ -1740,7 +1745,14 @@ static void NLRMFit (NLRMFitArg *arg)
     /* Errors wanted? */
     if (arg->doError) {
       /* second argument removes degenerate col/row from Jacobean */
+#if GSL_MAJOR_VERSION >=2
+      J = gsl_matrix_alloc(arg->solver->fdf->n, arg->solver->fdf->p);
+      gsl_multifit_fdfsolver_jac(arg->solver, J);
+      gsl_multifit_covar (J, 1.0e-8, arg->covar);
+      gsl_matrix_free(J);
+#else
       gsl_multifit_covar (arg->solver->J, 1.0e-8, arg->covar);
+#endif
       arg->coef[nterm+0] = sqrt(gsl_matrix_get(arg->covar, 1, 1));
       arg->coef[nterm+1] = sqrt(gsl_matrix_get(arg->covar, 0, 0));
       arg->coef[4] = chi2;

@@ -31,6 +31,7 @@
 #include "ObitThread.h"
 #ifdef HAVE_GSL
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_version.h>
 #endif /* HAVE_GSL */ 
 /*----------------Obit: Merx mollis mortibus nuper ------------------*/
 /**
@@ -1976,6 +1977,9 @@ static void NLFit (NLFitArg *arg)
   gsl_multifit_fdfsolver *solver=NULL;
   gsl_matrix *covar=NULL;
   gsl_vector *work=NULL;
+#if GSL_MAJOR_VERSION >=2
+  gsl_matrix *J = 0;
+#endif
 #endif /* HAVE_GSL */ 
  
   /* Initialize output */
@@ -2102,7 +2106,14 @@ static void NLFit (NLFitArg *arg)
       
       /* Errors wanted? */
       if (arg->doError) {
-	gsl_multifit_covar (solver->J, 0.0, covar);
+#if GSL_MAJOR_VERSION >=2
+    J = gsl_matrix_alloc(solver->fdf->n, solver->fdf->p);
+    gsl_multifit_fdfsolver_jac(solver, J);
+    gsl_multifit_covar(J, 0.0, covar);
+    gsl_matrix_free(J);
+#else
+    gsl_multifit_covar (solver->J, 0.0, covar);
+#endif
 	for (i=0; i<nterm; i++) {
 	  arg->coef[arg->nterm+i] = sqrt(gsl_matrix_get(covar, i, i));
 	  /* Clip to sanity range */
@@ -2164,6 +2175,9 @@ static void NLFitBP (NLFitArg *arg)
   gsl_multifit_fdfsolver *solver;
   gsl_matrix *covar;
   gsl_vector *work;
+#if GSL_MAJOR_VERSION >=2
+  gsl_matrix *J = 0;
+#endif
 #endif /* HAVE_GSL */ 
  
   /* determine weighted average, count valid data */
@@ -2239,7 +2253,14 @@ static void NLFitBP (NLFitArg *arg)
   
   /* Errors wanted? */
   if (arg->doError) {
+#if GSL_MAJOR_VERSION >=2
+    J = gsl_matrix_alloc(solver->fdf->n, solver->fdf->p);
+    gsl_multifit_fdfsolver_jac(solver, J);
+    gsl_multifit_covar(J, 0.0, covar);
+    gsl_matrix_free(J);
+#else
     gsl_multifit_covar (solver->J, 0.0, covar);
+#endif
     for (i=0; i<nterm; i++) {
       arg->coef[arg->nterm+i] = sqrt(gsl_matrix_get(covar, i, i));
       /* Clip to sanity range
