@@ -37,7 +37,7 @@ AC_CONFIG_SRCDIR(src/Obit.c)
 AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for programs.
-CFLAGS="-g -O3"
+CFLAGS="-O3 -march=native"
 AC_PROG_CC
 AC_PROG_RANLIB
 AM_PATH_PYTHON(3.2)
